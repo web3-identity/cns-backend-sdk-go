@@ -1,0 +1,1094 @@
+openapi: 3.0.1
+info:
+  contact: {}
+  description: The responses of the open api in swagger focus on the data field rather
+    than the code and the message fields
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: CNS-BACKEND
+  version: "0.1"
+servers:
+- url: http://101.42.88.184/cns-backend/v0
+- url: https://101.42.88.184/cns-backend/v0
+paths:
+  /censor/text:
+    post:
+      description: censor text if compliance
+      operationId: CensorText
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/services.CensorTextReq'
+        description: text for censor
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/services.CensorTextResp'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Internal Server error
+        "599":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Business error
+      summary: censor text if compliance
+      tags:
+      - Censor
+      x-codegen-request-body-name: censor_text_req
+  /commits:
+    get:
+      description: query commit
+      operationId: QueryCommit
+      parameters:
+      - in: query
+        name: order_state
+        schema:
+          type: string
+      - in: query
+        name: owner
+        schema:
+          type: string
+      - in: query
+        name: page
+        schema:
+          type: integer
+      - in: query
+        name: page_size
+        schema:
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/models.CommitCore'
+                type: array
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Internal Server error
+        "599":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Business error
+      summary: query commit
+      tags:
+      - Commits
+    post:
+      description: make commit for record commit detials for using when register
+      operationId: MakeCommits
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/models.CommitCore'
+        description: make commit request
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/services.MakeCommitResp'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Internal Server error
+        "599":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Business error
+      summary: make commit
+      tags:
+      - Commits
+      x-codegen-request-body-name: make_commit_req
+  /commits/{commit_hash}:
+    get:
+      description: get commit details by commit hash
+      operationId: GetCommit
+      parameters:
+      - description: commit hash
+        in: path
+        name: commit_hash
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/models.CommitCore'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Internal Server error
+        "599":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Business error
+      summary: get commit
+      tags:
+      - Commits
+  /registers:
+    post:
+      description: register by admin
+      operationId: Register
+      parameters:
+      - description: api key
+        in: header
+        name: X-Api-Key
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/models.CommitCore'
+        description: regitser request
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/services.RegisterByAdminResp'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Internal Server error
+        "599":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Business error
+      summary: register by admin
+      tags:
+      - Registers
+      x-codegen-request-body-name: commit
+  /registers/order/refresh-url/{commit_hash}:
+    put:
+      description: refresh register order url
+      operationId: RefreshRegisterOrderUrl
+      parameters:
+      - description: commit hash
+        in: path
+        name: commit_hash
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/services.MakeRegisterOrderResp'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Internal Server error
+        "599":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Business error
+      summary: refresh register order url
+      tags:
+      - Registers
+  /registers/order/{commit_hash}:
+    get:
+      description: get register order
+      operationId: GetRegisterOrder
+      parameters:
+      - description: commit hash
+        in: path
+        name: commit_hash
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/models.RegisterCore'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Internal Server error
+        "599":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Business error
+      summary: get register order
+      tags:
+      - Registers
+    post:
+      description: make register order
+      operationId: MakeRegisterOrder
+      parameters:
+      - description: commit hash
+        in: path
+        name: commit_hash
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/services.MakeRegisterOrderReq'
+        description: make register order request
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/services.MakeRegisterOrderResp'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Internal Server error
+        "599":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Business error
+      summary: make register order
+      tags:
+      - Registers
+      x-codegen-request-body-name: make_register_order_request
+  /registers/{commit_hash}:
+    get:
+      description: get register info by admin
+      operationId: GetRegister
+      parameters:
+      - description: commit hash
+        in: path
+        name: commit_hash
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/services.RegisterByAdminResp'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Internal Server error
+        "599":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Business error
+      summary: get register info by admin
+      tags:
+      - Registers
+  /renews:
+    post:
+      description: renew by admin
+      operationId: Renew
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/models.RenewOrderArgs'
+        description: renew request
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/services.RnewByAdminResp'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Internal Server error
+        "599":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Business error
+      summary: renew by admin
+      tags:
+      - Renews
+      x-codegen-request-body-name: make_renew_order_request
+  /renews/order:
+    post:
+      description: make renew order
+      operationId: MakeRenewOrder
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/services.MakeRenewOrderReq'
+        description: make renew order request
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/services.MakeRenewOrderResp'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Invalid request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Internal Server error
+      summary: make renew order
+      tags:
+      - Renews
+      x-codegen-request-body-name: make_renew_order_request
+  /renews/order/refresh-url/{id}:
+    put:
+      description: refresh renew order url
+      operationId: RefreshRenewOrderUrl
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: number
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/services.MakeRenewOrderResp'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Internal Server error
+        "599":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Business error
+      summary: refresh renew order url
+      tags:
+      - Renews
+  /renews/order/{id}:
+    get:
+      description: get renew order
+      operationId: GetRenewOrder
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: number
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/models.RenewCore'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Internal Server error
+        "599":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Business error
+      summary: get renew order
+      tags:
+      - Renews
+  /renews/{id}:
+    get:
+      description: get renew order by admin
+      operationId: GetRenew
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: number
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/services.RnewByAdminResp'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Unauthorized
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Internal Server error
+        "599":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cns_errors.CnsErrorResp'
+          description: Business error
+      summary: get renew order by admin
+      tags:
+      - Renews
+components:
+  schemas:
+    cns_errors.CnsErrorResp:
+      properties:
+        code:
+          type: string
+        detail:
+          type: string
+        message:
+          type: string
+      type: object
+    models.CommitCore:
+      example:
+        duration: 0
+        owner: owner
+        wrapper_expiry: 5
+        resolver: resolver
+        data:
+        - data
+        - data
+        fuses: 6
+        name: name
+        secret: secret
+        order_state: 1
+        commit_hash: commit_hash
+        reverse_record: true
+      properties:
+        commit_hash:
+          type: string
+        data:
+          description: hex 数组
+          items:
+            type: string
+          type: array
+        duration:
+          type: integer
+        fuses:
+          type: integer
+        name:
+          type: string
+        order_state:
+          type: integer
+        owner:
+          description: base32地址或hex地址
+          type: string
+        resolver:
+          type: string
+        reverse_record:
+          type: boolean
+        secret:
+          description: 32字节
+          type: string
+        wrapper_expiry:
+          type: integer
+      required:
+      - commit_hash
+      - data
+      - duration
+      - name
+      - owner
+      - resolver
+      - reverse_record
+      - secret
+      type: object
+    models.RegisterCore:
+      example:
+        amount: 0
+        time_expire: time_expire
+        trade_state: trade_state
+        description: description
+        tx_hash: tx_hash
+        qr_pay_mode: qr_pay_mode
+        trade_provider: trade_provider
+        tx_state: 6
+        commit_hash: commit_hash
+        app_name: app_name
+        h5_url: h5_url
+        wap_url: wap_url
+        code_url: code_url
+        tx_error: tx_error
+        return_url: return_url
+        trade_no: trade_no
+        trade_type: trade_type
+        qr_code_width: qr_code_width
+        refund_state: refund_state
+      properties:
+        amount:
+          description: 单位为分
+          type: integer
+        app_name:
+          type: string
+        code_url:
+          type: string
+        commit_hash:
+          type: string
+        description:
+          type: string
+        h5_url:
+          type: string
+        qr_code_width:
+          description: 二维码宽度。 只有alipay，且 trade type 为 h5 模式有效，qr pay mode 为4 时有效；
+            用法参考 https://opendocs.alipay.com/apis/api_1/alipay.trade.page.pay?scene=22
+          type: string
+        qr_pay_mode:
+          description: 支付二维码模式。 只有alipay，且 trade type 为 h5 模式有效; 用法参考 https://opendocs.alipay.com/apis/api_1/alipay.trade.page.pay?scene=22
+          type: string
+        refund_state:
+          type: string
+        return_url:
+          description: 付款成功后的跳转链接。只有alipay，且 trade type 为 h5 模式有效; 用法参考 https://opendocs.alipay.com/apis/api_1/alipay.trade.page.pay?scene=22
+          type: string
+        time_expire:
+          type: string
+        trade_no:
+          type: string
+        trade_provider:
+          type: string
+        trade_state:
+          type: string
+        trade_type:
+          type: string
+        tx_error:
+          type: string
+        tx_hash:
+          type: string
+        tx_state:
+          type: integer
+        wap_url:
+          type: string
+      type: object
+    models.RenewCore:
+      example:
+        amount: 0
+        time_expire: time_expire
+        trade_state: trade_state
+        fuses: 1
+        description: description
+        tx_hash: tx_hash
+        qr_pay_mode: qr_pay_mode
+        trade_provider: trade_provider
+        tx_state: 5
+        cns_name: cns_name
+        duration: 6
+        wrapper_expiry: 5
+        app_name: app_name
+        h5_url: h5_url
+        wap_url: wap_url
+        code_url: code_url
+        tx_error: tx_error
+        return_url: return_url
+        trade_no: trade_no
+        trade_type: trade_type
+        qr_code_width: qr_code_width
+        refund_state: refund_state
+      properties:
+        amount:
+          description: 单位为分
+          type: integer
+        app_name:
+          type: string
+        cns_name:
+          type: string
+        code_url:
+          type: string
+        description:
+          type: string
+        duration:
+          type: integer
+        fuses:
+          type: integer
+        h5_url:
+          type: string
+        qr_code_width:
+          description: 二维码宽度。 只有alipay，且 trade type 为 h5 模式有效，qr pay mode 为4 时有效；
+            用法参考 https://opendocs.alipay.com/apis/api_1/alipay.trade.page.pay?scene=22
+          type: string
+        qr_pay_mode:
+          description: 支付二维码模式。 只有alipay，且 trade type 为 h5 模式有效; 用法参考 https://opendocs.alipay.com/apis/api_1/alipay.trade.page.pay?scene=22
+          type: string
+        refund_state:
+          type: string
+        return_url:
+          description: 付款成功后的跳转链接。只有alipay，且 trade type 为 h5 模式有效; 用法参考 https://opendocs.alipay.com/apis/api_1/alipay.trade.page.pay?scene=22
+          type: string
+        time_expire:
+          type: string
+        trade_no:
+          type: string
+        trade_provider:
+          type: string
+        trade_state:
+          type: string
+        trade_type:
+          type: string
+        tx_error:
+          type: string
+        tx_hash:
+          type: string
+        tx_state:
+          type: integer
+        wap_url:
+          type: string
+        wrapper_expiry:
+          type: integer
+      required:
+      - cns_name
+      - duration
+      - wrapper_expiry
+      type: object
+    models.RenewOrderArgs:
+      properties:
+        cns_name:
+          type: string
+        duration:
+          type: integer
+        fuses:
+          type: integer
+        wrapper_expiry:
+          type: integer
+      required:
+      - cns_name
+      - duration
+      - wrapper_expiry
+      type: object
+    services.CensorTextReq:
+      properties:
+        content:
+          type: string
+      required:
+      - content
+      type: object
+    services.CensorTextResp:
+      example:
+        conclusion: conclusion
+        data:
+        - conclusion: conclusion
+          hits:
+          - probability: 1.4658129805029452
+            datasetName: datasetName
+            words:
+            - words
+            - words
+          - probability: 1.4658129805029452
+            datasetName: datasetName
+            words:
+            - words
+            - words
+          msg: msg
+          subType: 5
+          conclusionType: 6
+          type: 5
+        - conclusion: conclusion
+          hits:
+          - probability: 1.4658129805029452
+            datasetName: datasetName
+            words:
+            - words
+            - words
+          - probability: 1.4658129805029452
+            datasetName: datasetName
+            words:
+            - words
+            - words
+          msg: msg
+          subType: 5
+          conclusionType: 6
+          type: 5
+        conclusionType: 0
+      properties:
+        conclusion:
+          description: LogID          int64  `json:"log_id"`
+          type: string
+        conclusionType:
+          description: 审核结果类型，可取值1.合规，2.不合规，3.疑似，4.审核失败
+          type: integer
+        data:
+          description: 不合规/疑似/命中白名单项详细信息。响应成功并且conclusion为疑似或不合规或命中白名单时才返回，响应失败或conclusion为合规且未命中白名单时不返回
+          items:
+            $ref: '#/components/schemas/services.Data'
+          type: array
+      required:
+      - conclusion
+      - conclusionType
+      type: object
+    services.Data:
+      example:
+        conclusion: conclusion
+        hits:
+        - probability: 1.4658129805029452
+          datasetName: datasetName
+          words:
+          - words
+          - words
+        - probability: 1.4658129805029452
+          datasetName: datasetName
+          words:
+          - words
+          - words
+        msg: msg
+        subType: 5
+        conclusionType: 6
+        type: 5
+      properties:
+        conclusion:
+          description: 审核结果，可取值：合规、不合规、疑似、审核失败
+          type: string
+        conclusionType:
+          description: 审核结果类型，可取值1.合规，2.不合规，3.疑似，4.审核失败
+          type: integer
+        hits:
+          description: 命中关键词信息
+          items:
+            $ref: '#/components/schemas/services.Hits'
+          type: array
+        msg:
+          description: 不合规项描述信息
+          type: string
+        subType:
+          description: 审核子类型，此字段需参照type主类型字段决定其含义： 当type=11时subType取值含义： 0:百度官方默认违禁词库
+            当type=12时subType取值含义： 0:低质灌水、1:暴恐违禁、2:文本色情、3:政治敏感、4:恶意推广、5:低俗辱骂 当type=13时subType取值含义：
+            0:自定义文本黑名单 当type=14时subType取值含义： 0:自定义文本白名单
+          type: integer
+        type:
+          description: 审核主类型，11：官方违禁词库、12：文本反作弊、13:自定义文本黑名单、14:自定义文本白名单
+          type: integer
+      type: object
+    services.Hits:
+      example:
+        probability: 1.4658129805029452
+        datasetName: datasetName
+        words:
+        - words
+        - words
+      properties:
+        datasetName:
+          description: 违规项目所属数据集名称
+          type: string
+        probability:
+          type: number
+        words:
+          description: 违规文本关键字
+          items:
+            type: string
+          type: array
+      type: object
+    services.MakeCommitResp:
+      example:
+        commit_hash: commit_hash
+      properties:
+        commit_hash:
+          type: string
+      type: object
+    services.MakeRegisterOrderReq:
+      properties:
+        description:
+          type: string
+        trade_provider:
+          type: string
+        trade_type:
+          type: string
+      required:
+      - description
+      - trade_type
+      type: object
+    services.MakeRegisterOrderResp:
+      example:
+        h5_url: h5_url
+        wap_url: wap_url
+        code_url: code_url
+        trade_no: trade_no
+        trade_type: trade_type
+        trade_provider: trade_provider
+        commit_hash: commit_hash
+      properties:
+        code_url:
+          type: string
+        commit_hash:
+          type: string
+        h5_url:
+          type: string
+        trade_no:
+          type: string
+        trade_provider:
+          type: string
+        trade_type:
+          type: string
+        wap_url:
+          type: string
+      type: object
+    services.MakeRenewOrderReq:
+      properties:
+        cns_name:
+          type: string
+        description:
+          type: string
+        duration:
+          type: integer
+        fuses:
+          type: integer
+        trade_provider:
+          type: string
+        trade_type:
+          type: string
+        wrapper_expiry:
+          type: integer
+      required:
+      - cns_name
+      - description
+      - duration
+      - trade_type
+      - wrapper_expiry
+      type: object
+    services.MakeRenewOrderResp:
+      example:
+        h5_url: h5_url
+        wap_url: wap_url
+        code_url: code_url
+        trade_no: trade_no
+        trade_type: trade_type
+        id: 0
+        trade_provider: trade_provider
+      properties:
+        code_url:
+          type: string
+        h5_url:
+          type: string
+        id:
+          type: integer
+        trade_no:
+          type: string
+        trade_provider:
+          type: string
+        trade_type:
+          type: string
+        wap_url:
+          type: string
+      type: object
+    services.RegisterByAdminResp:
+      example:
+        tx_error: tx_error
+        tx_hash: tx_hash
+        tx_state: 0
+        commit_hash: commit_hash
+      properties:
+        commit_hash:
+          type: string
+        tx_error:
+          type: string
+        tx_hash:
+          type: string
+        tx_state:
+          type: integer
+      type: object
+    services.RnewByAdminResp:
+      example:
+        duration: 0
+        wrapper_expiry: 5
+        fuses: 6
+        tx_error: tx_error
+        tx_hash: tx_hash
+        id: 1
+        tx_state: 5
+        cns_name: cns_name
+      properties:
+        cns_name:
+          type: string
+        duration:
+          type: integer
+        fuses:
+          type: integer
+        id:
+          type: integer
+        tx_error:
+          type: string
+        tx_hash:
+          type: string
+        tx_state:
+          type: integer
+        wrapper_expiry:
+          type: integer
+      required:
+      - cns_name
+      - duration
+      - wrapper_expiry
+      type: object
+x-original-swagger-version: "2.0"
